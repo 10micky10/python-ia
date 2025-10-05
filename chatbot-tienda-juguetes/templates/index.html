@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat - Juguetería Mundo Mágico</title>
+  <style>
+    body { font-family: Arial; margin: 20px; background: #f9f9f9; }
+    #chatbox { width: 100%; max-width: 600px; margin: auto; background: white; border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
+    .msg { margin-bottom: 10px; }
+    .user { font-weight: bold; color: #007bff; }
+    .bot { font-weight: bold; color: #28a745; }
+    input[type="text"] { width: 80%; padding: 10px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <h2>🧸 Juguetería Mundo Mágico - Chatbot</h2>
+    <div id="messages"></div>
+    <input type="text" id="userInput" placeholder="Escribe tu mensaje..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+
+  <script>
+    function addMessage(role, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("msg");
+      msgDiv.innerHTML = `<span class="${role}">${role === 'user' ? 'Tú' : 'Bot'}:</span> ${text}`;
+      document.getElementById("messages").appendChild(msgDiv);
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage("user", text);
+      input.value = "";
+
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await response.json();
+      addMessage("bot", data.response);
+    }
+  </script>
+</body>
+</html>
